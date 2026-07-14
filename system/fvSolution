@@ -30,12 +30,26 @@ solvers
         relTol          0;
     }
 
-    "p_rgh.*"
+    "pcorr.*"
     {
-        solver          PCG;
-        preconditioner  DIC;
+        solver          GAMG;
+        smoother        GaussSeidel;
+        tolerance       1e-05;
+        relTol          0;
+    }
+
+    p_rgh
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
         tolerance       1e-08;
         relTol          0.05;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+        relTol          0;
     }
 
     "(U|k|omega).*"
@@ -55,6 +69,10 @@ PIMPLE
     nNonOrthogonalCorrectors 1;
     correctPhi          yes;
     moveMeshOuterCorrectors yes;
+
+    // Closed domain (no fixed-pressure patch): pin a reference cell
+    pRefCell            0;
+    pRefValue           0;
 }
 
 relaxationFactors

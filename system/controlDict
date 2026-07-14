@@ -23,13 +23,13 @@ startTime           0;
 
 stopAt              endTime;
 
-endTime             5;
+endTime             0.5;   // short demo run (~2 impeller revolutions)
 
-deltaT              0.001;
+deltaT              1e-5;   // gentle impulsive-start; adjustTimeStep ramps up to maxCo/maxDeltaT
 
 writeControl        adjustableRunTime;
 
-writeInterval       0.1;
+writeInterval       0.05;
 
 purgeWrite          0;
 
@@ -47,8 +47,9 @@ runTimeModifiable   yes;
 
 adjustableRunTime   yes;
 
-maxCo               5;
+adjustTimeStep      yes;
+maxCo               10;
 maxAlphaCo          2;
-maxDeltaT           0.01;
+maxDeltaT           0.05;
 
 // ************************************************************************* //

@@ -22,10 +22,23 @@ internalField   uniform 0.00375;
 
 boundaryField
 {
+    tank
+    {
+        type            kqRWallFunction;
+        value           uniform 0.00375;
+    }
     impeller
     {
         type            kqRWallFunction;
         value           uniform 0.00375;
+    }
+    ami1
+    {
+        type            cyclicAMI;
+    }
+    ami2
+    {
+        type            cyclicAMI;
     }
 }
 

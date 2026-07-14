@@ -22,11 +22,25 @@ internalField   uniform 0;
 
 boundaryField
 {
+    tank
+    {
+        type            fixedFluxPressure;
+        gradient        uniform 0;
+        value           uniform 0;
+    }
     impeller
     {
         type            fixedFluxPressure;
         gradient        uniform 0;
         value           uniform 0;
+    }
+    ami1
+    {
+        type            cyclicAMI;
+    }
+    ami2
+    {
+        type            cyclicAMI;
     }
 }
 

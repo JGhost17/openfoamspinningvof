@@ -24,9 +24,14 @@ solver             solidBody;
 solidBodyCoeffs
 {
     cellZone        rotatingZone;
-    origin          (0 0 0.495);
-    axis            (0 0 1);
-    omega           25;
+
+    solidBodyMotionFunction rotatingMotion;
+    rotatingMotionCoeffs
+    {
+        origin      (0 0 0.495);
+        axis        (0 0 1);
+        omega       25;   // rad/s (~239 rpm)
+    }
 }
 
 // ************************************************************************* //

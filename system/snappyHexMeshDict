@@ -26,20 +26,28 @@ geometry
     {
         type triSurfaceMesh;
         name tank;
+        scale 0.001;
     }
 
     impeller.stl
     {
         type triSurfaceMesh;
         name impeller;
+        scale 0.001;
     }
 
     ami.stl
     {
         type triSurfaceMesh;
         name ami;
-        faceZone rotatingZone;
-        cellZone rotatingZone;
+        scale 0.001;
+    }
+
+    rotatingBox
+    {
+        type searchableBox;
+        min (-0.45 -0.45 0.35);
+        max (0.45 0.45 2.0);
     }
 }
 
@@ -72,6 +80,9 @@ castellatedMeshControls
         ami
         {
             level (2 2);
+            faceZone rotatingZone;
+            cellZone rotatingZone;
+            cellZoneInside inside;
         }
         impeller
         {
@@ -88,18 +99,13 @@ castellatedMeshControls
         rotatingBox
         {
             mode inside;
-            levels (0 0);
-            searchableBox
-            {
-                min (-0.45 -0.45 0.35);
-                max (0.45 0.45 2.0);
-            }
+            levels ((1e15 0));
         }
     }
 
     resolveFeatureAngle 30;
 
-    locationInMesh (0 0 1.5);
+    locationInMesh (0.8 0 0.6);
 
     allowFreeStandingZoneFaces true;
 }

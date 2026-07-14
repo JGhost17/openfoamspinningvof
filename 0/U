@@ -22,10 +22,22 @@ internalField   uniform (0 0 0);
 
 boundaryField
 {
+    tank
+    {
+        type            noSlip;
+    }
     impeller
     {
         type            movingWallVelocity;
         value           uniform (0 0 0);
+    }
+    ami1
+    {
+        type            cyclicAMI;
+    }
+    ami2
+    {
+        type            cyclicAMI;
     }
 }
 

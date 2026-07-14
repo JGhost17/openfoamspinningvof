@@ -22,15 +22,15 @@ sigma           0.02;
 oilHeavy
 {
     transportModel  Newtonian;
-    nu              4.347826e-05;
-    rho             1150;
+    nu              3.5e-04;     // kinematic = mu/rho = 0.329 / 940
+    rho             940;
 }
 
 oilLight
 {
     transportModel  Newtonian;
-    nu              1.000000e-05;
-    rho             1000;
+    nu              5.0e-06;     // kinematic = mu/rho = 0.0041 / 820
+    rho             820;
 }
 
 // ************************************************************************* //

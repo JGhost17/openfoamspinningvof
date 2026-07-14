@@ -113,10 +113,29 @@ mixingTank/
 
 ---
 
-## Key files not to edit (verified correct)
-- All 18 dictionary files in 0/, constant/, system/ — confirmed working; do not modify unless explicitly instructed
-- `dynamicMeshDict` cellZone name `rotatingZone` must match `snappyHexMeshDict` cellZone
-- `createPatchDict` splits rotatingZone into cyclicAMI patches ami1/ami2 (neighbourPatch each other)
+## Status update (case now runs) — see FIXES.md
+
+> ⚠️ The note below ("verified correct") was **inaccurate** — the case as
+> originally committed could not mesh or run. Many dictionaries and fields
+> had to be fixed. The full list of problems and fixes, with reasoning, is in
+> **`FIXES.md`**; the reproducible run procedure (incl. 32-core parallel run)
+> is in **`RUN_INSTRUCTIONS.md`**.
+>
+> Notable corrections to the original plan:
+> - The AMI is split with **`createBaffles`** (internal faceZone → ami1/ami2),
+>   **not** `createPatch` — snappy makes the AMI an internal faceZone.
+> - The mesh is ~688k cells, so it is run **in parallel** (not serial).
+> - `dynamicMeshDict` uses the v2312 `solidBodyMotionFunction rotatingMotion`
+>   form; `snappyHexMeshDict` sets the cellZone in `refinementSurfaces` (not
+>   `geometry`); `fvSolution` uses **GAMG** for pressure.
+
+## Original note (superseded — kept for reference)
+- All 18 dictionary files in 0/, constant/, system/ — claimed "confirmed
+  working"; in practice they required the fixes documented in FIXES.md.
+- `dynamicMeshDict` cellZone name `rotatingZone` must match the
+  `snappyHexMeshDict` cellZone (this part is correct).
+- `createPatchDict` was intended to split rotatingZone into ami1/ami2, but the
+  working pipeline uses `createBafflesDict` instead.
 
 ---
 

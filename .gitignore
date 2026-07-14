@@ -1,0 +1,10 @@
+constant/polyMesh/*
+!constant/polyMesh/boundary
+0/*
+!0/alpha.oilHeavy
+!0/U
+!0/p_rgh
+!0/k
+!0/omega
+*.log
+*.bak

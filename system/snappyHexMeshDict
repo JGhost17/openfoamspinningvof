@@ -1,0 +1,161 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                               |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.com                |
+|   \\  /    A nd           | Version:  2406                                |
+|    \\/     M anipulation  |                                               |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       false;
+mergeTolerance  1e-6;
+
+geometry
+{
+    tank.stl
+    {
+        type triSurfaceMesh;
+        name tank;
+    }
+
+    impeller.stl
+    {
+        type triSurfaceMesh;
+        name impeller;
+    }
+
+    ami.stl
+    {
+        type triSurfaceMesh;
+        name ami;
+        faceZone rotatingZone;
+        cellZone rotatingZone;
+    }
+}
+
+castellatedMeshControls
+{
+    maxLocalCells        10000000;
+    maxGlobalCells       20000000;
+    minRefinementCells   10;
+    maxLoadUnbalance     0.10;
+    nCellsBetweenLevels  3;
+
+    features
+    (
+        {
+            file "tank.eMesh";
+            level 0;
+        }
+        {
+            file "impeller.eMesh";
+            level 0;
+        }
+        {
+            file "ami.eMesh";
+            level 0;
+        }
+    );
+
+    refinementSurfaces
+    {
+        ami
+        {
+            level (2 2);
+        }
+        impeller
+        {
+            level (2 2);
+        }
+        tank
+        {
+            level (0 0);
+        }
+    }
+
+    refinementRegions
+    {
+        rotatingBox
+        {
+            mode inside;
+            levels (0 0);
+            searchableBox
+            {
+                min (-0.45 -0.45 0.35);
+                max (0.45 0.45 2.0);
+            }
+        }
+    }
+
+    resolveFeatureAngle 30;
+
+    locationInMesh (0 0 1.5);
+
+    allowFreeStandingZoneFaces true;
+}
+
+snapControls
+{
+    nSmoothPatch         3;
+    tolerance            2.0;
+    nSolveIter           30;
+    nRelaxIter           5;
+    nFeatureSnapIter     10;
+    implicitFeatureSnap  false;
+    explicitFeatureSnap  true;
+    multiRegionFeatureSnap false;
+}
+
+addLayersControls
+{
+    relativeSizes true;
+    layers
+    {
+        tank
+        {
+            nSurfaceLayers 0;
+        }
+        impeller
+        {
+            nSurfaceLayers 0;
+        }
+        ami
+        {
+            nSurfaceLayers 0;
+        }
+    }
+}
+
+meshQualityControls
+{
+    maxNonOrtho 65;
+    maxBoundarySkewness 20;
+    maxInternalSkewness 4;
+    maxConcave 80;
+    minVol 1e-13;
+    minTetQuality 1e-9;
+    minArea -1;
+    minDeterminant 0.001;
+    minFaceWeight 0.05;
+    minVolRatio 0.01;
+    minTwist 0.0002;
+    minTriangleTwist -1;
+    nSmoothScale 4;
+    errorReduction 0.75;
+    relaxed
+    {
+        maxNonOrtho 75;
+    }
+}
+
+// ************************************************************************* //

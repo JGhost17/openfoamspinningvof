@@ -1,0 +1,81 @@
+# Cline Rules — OpenFOAM Mixing Tank Project
+
+## Environment
+- Always activate venv before running any Python/shell command:
+  `source venv/bin/activate` (Linux/Mac) or `venv\Scripts\activate` (Windows)
+- Never run pip/python commands without venv active. Verify with `which python` first if unsure.
+
+## Token efficiency
+- No explanations unless asked. Output code/commands only.
+- No restating the task before acting.
+- No summaries after task completion — just confirm done in 1 line.
+- Skip preamble like "I will now..." — just execute.
+- Read only files directly relevant to current subtask, not entire repo.
+- Don't re-read files already shown in context this session.
+
+## OpenFOAM conventions
+- Case structure fixed: 0/, constant/, system/. Never create dirs outside this.
+- STL geometry lives only in constant/triSurface/.
+- Follow this exact meshing order, never reorder:
+  surfaceFeatureExtract -> blockMesh -> snappyHexMesh -overwrite -> 
+  renumberMesh -overwrite -> createPatch -overwrite
+- Do not auto-populate dictionary files with default/example content unless 
+  explicitly instructed — empty scaffolding only until told otherwise.
+- Match OpenFOAM.com/ESI syntax (v1906-v2606), not OpenFOAM Foundation syntax.
+
+## Output style
+- Plain text status updates, no markdown headers in chat responses.
+- Flag errors immediately, don't attempt silent retries more than once.
+
+# .clinerules
+
+## Project
+OpenFOAM v2406 case: two-phase (water/air) stirred-tank mixer, interFoam
+solver, rotating impeller via AMI. Geometry: tank.STL, impeller.STL,
+ami.STL in constant/triSurface/. Impeller top sits 10mm below tank top.
+
+## Environment
+- Host OS: Windows. OpenFOAM runs inside WSL2 Ubuntu, not natively on Windows.
+- All OpenFOAM commands (blockMesh, snappyHexMesh, interFoam, etc.) must be run from the Ubuntu WSL terminal, never PowerShell/cmd.
+- OpenFOAM install: openfoam2406-default via OpenFOAM.com apt repo.
+- Environment must be sourced each session: source /usr/lib/openfoam/openfoam2406/etc/bashrc (this line should already be in ~/.bashrc — verify before assuming a fresh terminal has it).
+- Verify utilities on PATH before running any mesh/solve step: blockMesh -help, checkMesh -help, snappyHexMesh -help must return usage text, not "command not found".
+- Confirm active version with: echo $WM_PROJECT_VERSION (expect 2406).
+- Windows case folder is reachable from WSL at /mnt/c/Users/JoshuaAlcobiaGomes/Desktop/OpenFoam Mixing Tank. For meshing performance, prefer copying the case into the Linux filesystem (e.g. ~/mixingTank) before running snappyHexMesh.
+- ParaView runs on the Windows side; access WSL case files from Windows via \\wsl$\Ubuntu\home\... if the case was copied into the Linux filesystem.
+
+## Mesh Execution Order (strict, do not reorder or skip)
+1. surfaceFeatureExtract
+2. blockMesh
+3. snappyHexMesh -overwrite
+4. renumberMesh -overwrite
+5. createPatch -overwrite
+6. checkMesh
+7. setFields
+8. interFoam
+
+Stop immediately on any non-zero exit code or FATAL ERROR. Report the exact error text before proceeding to the next command. Do not re-run earlier steps (e.g. surfaceFeatureExtract, blockMesh) unless STL geometry or blockMeshDict actually changed.
+
+## Dictionary File Rules
+- Do not edit any of the 18 case dictionary files unless explicitly instructed — they have been verified correct.
+- dynamicMeshDict cellZone name (rotatingZone) must match exactly what is defined in snappyHexMeshDict's ami refinementSurface (cellZone + faceZone).
+- createPatchDict splits the rotatingZone faceZone into ami1/ami2, both type cyclicAMI, each other's neighbourPatch.
+
+## Coarse Mesh Constraint (current phase)
+- Target background cell size: ~1cm, set via blockMeshDict divisions based on tank.STL bounding box.
+- Keep all snappyHexMeshDict refinementSurfaces at level (0 0) — no extra refinement layered on top of the 1cm base grid.
+- Skip addLayers at this stage.
+- Goal is confirming AMI + rotatingMotion + VoF setup runs without divergence, not accuracy.
+
+## ParaView / Results
+- Case must be opened via an empty placeholder file with .foam extension (e.g. paraview.foam) at case root, next to 0/, constant/, system/.
+- If ParaView reports "contains no meshes," check in this order: constant/polyMesh populated (points, faces, owner, neighbour, boundary non-empty) → parallel decomposition not reconstructed (run reconstructParMesh -constant if processor* folders exist) → checkMesh output for zero cells or fatal errors → OpenFOAM actually installed and on PATH.
+- Never regenerate the .foam placeholder as a first troubleshooting step — confirm the mesh itself is valid first.
+
+## Efficiency Rules
+- Run checkMesh once, immediately after createPatch -overwrite, not after every sub-step.
+- Default to serial execution for this coarse mesh; only parallelize (decomposePar + snappyHexMesh -parallel + reconstructParMesh) if cell count exceeds ~500k.
+- Use short endTime (a few impeller revolutions) for functionality checks, not full production duration.
+- Use adjustableRunTime with maxCo 5 rather than small fixed deltaT.
+- Defer turbulence tuning and surface-layer addition until the coarse mesh confirms stability.
+- On early divergence, check AMI patch-weight warnings in the log before re-meshing — bad AMI overlap is the cheapest failure mode to diagnose.

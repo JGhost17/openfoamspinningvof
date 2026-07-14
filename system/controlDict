@@ -1,0 +1,54 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.com
+    \\  /    A nd           | Version:  2406
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application         interFoam;
+
+startFrom           startTime;
+
+startTime           0;
+
+stopAt              endTime;
+
+endTime             5;
+
+deltaT              0.001;
+
+writeControl        adjustableRunTime;
+
+writeInterval       0.1;
+
+purgeWrite          0;
+
+writeFormat         ascii;
+
+writePrecision      6;
+
+writeCompression    off;
+
+timeFormat          general;
+
+timePrecision       6;
+
+runTimeModifiable   yes;
+
+adjustableRunTime   yes;
+
+maxCo               5;
+maxAlphaCo          2;
+maxDeltaT           0.01;
+
+// ************************************************************************* //

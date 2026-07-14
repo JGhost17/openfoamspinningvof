@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.com
+    \\  /    A nd           | Version:  2406
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      surfaceFeatureExtractDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+tank.stl
+{
+    extractionMethod    extractFromSurface;
+    includedAngle       150;
+    writeObj            yes;
+}
+
+impeller.stl
+{
+    extractionMethod    extractFromSurface;
+    includedAngle       150;
+    writeObj            yes;
+}
+
+ami.stl
+{
+    extractionMethod    extractFromSurface;
+    includedAngle       150;
+    writeObj            yes;
+}
+
+// ************************************************************************* //

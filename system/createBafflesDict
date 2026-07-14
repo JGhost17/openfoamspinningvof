@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.com
+    \\  /    A nd           | Version:  2406
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      createBafflesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Whether to convert internal faces only (so leave boundary faces intact).
+internalFacesOnly true;
+
+// Baffles to create.
+baffles
+{
+    rotatingZone
+    {
+        //- Use predefined faceZone to select faces and orientation.
+        type        faceZone;
+        zoneName    rotatingZone;
+
+        patches
+        {
+            master
+            {
+                //- Master side patch
+                name            ami1;
+                type            cyclicAMI;
+                matchTolerance  0.0001;
+                neighbourPatch  ami2;
+                transform       noOrdering;
+            }
+
+            slave
+            {
+                //- Slave side patch
+                name            ami2;
+                type            cyclicAMI;
+                matchTolerance  0.0001;
+                neighbourPatch  ami1;
+                transform       noOrdering;
+            }
+        }
+    }
+}
+
+// ************************************************************************* //

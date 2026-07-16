@@ -24,7 +24,7 @@ regions
 (
     boxToCell
     {
-        box (-1.25 -1.25 0) (1.25 1.25 1.8);
+        box (-1.25 -1.25 0) (1.25 1.25 1.17);   // fill lower half -> 50/50 by volume (tank z ~0.02..2.32)
         fieldValues
         (
             volScalarFieldValue alpha.oilHeavy 1

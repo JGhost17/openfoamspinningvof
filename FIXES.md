@@ -197,6 +197,47 @@ and performance. All are now resolved.
 
 ---
 
+## G. 50/50 initial split — stability of the interface at the impeller
+
+### G1. Even (50/50) fill placed the interface in the impeller/AMI zone → deterministic NaN crash
+- **Symptom:** With `setFieldsDict` filling the lower **half** (box top z=1.17,
+  giving volume fraction 0.4999 — an even split), `interFoam` crashed
+  **deterministically at t≈0.0055 s** (a NaN forming regardless of solver
+  settings). The earlier ~78% fill did not, because its interface sat higher,
+  away from the worst region.
+- **Diagnosis:** The NaN was reproduced identically with the FP-trap on, the
+  FP-trap off (NaN then surfaced in the pressure solve), GAMG *and* PCG for
+  pressure, an impeller-speed ramp, extra alpha sub-cycles, and an extra
+  non-orthogonal corrector — same crash time and timestep every run. That
+  rules out the numerics and points at the **mesh/geometry**: the impeller
+  (radius 0.35 m) sits only ~0.05 m from the AMI cylinder (radius 0.40 m), so
+  the high-shear cells in that gap were too few and poorly shaped, and the
+  50/50 interface passes straight through them.
+- **Fix (what made it run to completion):**
+  - **Refine the rotating region:** `refinementRegions/rotatingBox` level
+    `0 → 1` in `snappyHexMeshDict` — resolves the impeller-AMI gap with more,
+    better cells (mesh ~688k → ~740k). *This was the decisive change.*
+  - Better snap quality: `nSolveIter 30→100`, `nRelaxIter 5→10`,
+    `nSmoothPatch 3→5`, `nSmoothScale 4→10`, `errorReduction 0.75→0.8`.
+  - **Pressure solver `p_rgh`/`pcorr`: GAMG → PCG/DIC** — GAMG's coarsening
+    diverged to NaN on the ill-conditioned AMI-baffle cells; PCG is slower but
+    robust and does not diverge.
+  - **Impeller spin-up ramp:** `dynamicMeshDict` omega as a Function1 table
+    `0 → 25 rad/s over 0.02 s` — avoids an impulsive-start shock at the
+    interface.
+  - `nNonOrthogonalCorrectors 1→2`, `nAlphaSubCycles 1→2` for interface
+    robustness.
+- **Result:** the 50/50 case now completes to t=0.2 s (168 steps) with no
+  crash, bounded Courant, alpha in [0,1]. It shows the impeller-driven swirl
+  and the interface beginning to deform; full blending needs the long (~300 s)
+  run.
+- **Trade-off / note:** PCG is ~5–8× slower per step than GAMG. If GAMG is
+  wanted back for speed on a *better* mesh, first enlarge the AMI cylinder
+  radius (e.g. 0.4 → 0.55 m) to widen the impeller-AMI gap — the root
+  geometric cause — rather than relying on PCG to tolerate the tight gap.
+
+---
+
 ## Current fluid properties (set per request)
 
 | Phase | ρ (kg/m³) | μ (Pa·s) | ν = μ/ρ (m²/s) |

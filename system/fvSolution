@@ -20,7 +20,7 @@ solvers
     "alpha.oilHeavy.*"
     {
         nAlphaCorr      2;
-        nAlphaSubCycles 1;
+        nAlphaSubCycles 2;
         cAlpha          1;
         MULESCorr       yes;
         nLimiterIter    5;
@@ -32,16 +32,17 @@ solvers
 
     "pcorr.*"
     {
-        solver          GAMG;
-        smoother        GaussSeidel;
+        // PCG/DIC: robust on the ill-conditioned AMI cells (GAMG diverged to nan)
+        solver          PCG;
+        preconditioner  DIC;
         tolerance       1e-05;
         relTol          0;
     }
 
     p_rgh
     {
-        solver          GAMG;
-        smoother        GaussSeidel;
+        solver          PCG;
+        preconditioner  DIC;
         tolerance       1e-08;
         relTol          0.05;
     }
@@ -66,7 +67,7 @@ PIMPLE
     momentumPredictor   yes;
     nOuterCorrectors    3;
     nCorrectors         2;
-    nNonOrthogonalCorrectors 1;
+    nNonOrthogonalCorrectors 2;
     correctPhi          yes;
     moveMeshOuterCorrectors yes;
 

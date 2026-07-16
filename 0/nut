@@ -35,10 +35,12 @@ boundaryField
     ami1
     {
         type            cyclicAMI;
+        value           uniform 0;
     }
     ami2
     {
         type            cyclicAMI;
+        value           uniform 0;
     }
 }
 

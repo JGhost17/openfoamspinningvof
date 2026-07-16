@@ -23,6 +23,8 @@ constant/cellToRegion
 # Backups / editor cruft
 *.bak
 
-# Keep exported viewables if you choose to commit them
-!VTK/
+# VTK export is large (~hundreds of MB) and regenerable — do not commit
+VTK/
+
+# Keep the small rendered result images
 !results/

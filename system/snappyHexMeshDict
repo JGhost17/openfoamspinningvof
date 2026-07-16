@@ -99,7 +99,7 @@ castellatedMeshControls
         rotatingBox
         {
             mode inside;
-            levels ((1e15 0));
+            levels ((1e15 1));   // refine the rotating region (impeller-AMI gap)
         }
     }
 
@@ -112,11 +112,11 @@ castellatedMeshControls
 
 snapControls
 {
-    nSmoothPatch         3;
+    nSmoothPatch         5;
     tolerance            2.0;
-    nSolveIter           30;
-    nRelaxIter           5;
-    nFeatureSnapIter     10;
+    nSolveIter           100;
+    nRelaxIter           10;
+    nFeatureSnapIter     15;
     implicitFeatureSnap  false;
     explicitFeatureSnap  true;
     multiRegionFeatureSnap false;
@@ -156,8 +156,8 @@ meshQualityControls
     minVolRatio 0.01;
     minTwist 0.0002;
     minTriangleTwist -1;
-    nSmoothScale 4;
-    errorReduction 0.75;
+    nSmoothScale 10;
+    errorReduction 0.8;
     relaxed
     {
         maxNonOrtho 75;

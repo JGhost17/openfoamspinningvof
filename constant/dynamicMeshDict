@@ -30,7 +30,14 @@ solidBodyCoeffs
     {
         origin      (0 0 0.495);
         axis        (0 0 1);
-        omega       25;   // rad/s (~239 rpm)
+        // Ramp 0 -> 25 rad/s over 0.02 s to avoid an impulsive-start shock
+        // at the interface (then hold 25 rad/s ~239 rpm).
+        omega       table
+        (
+            (0     0)
+            (0.02  25)
+            (100   25)
+        );
     }
 }
 

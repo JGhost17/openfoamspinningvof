@@ -23,13 +23,13 @@ startTime           0;
 
 stopAt              endTime;
 
-endTime             0.5;   // short demo run (~2 impeller revolutions)
+endTime             0.2;   // short laptop demo (~0.8 impeller revolution)
 
 deltaT              1e-5;   // gentle impulsive-start; adjustTimeStep ramps up to maxCo/maxDeltaT
 
 writeControl        adjustableRunTime;
 
-writeInterval       0.05;
+writeInterval       0.02;
 
 purgeWrite          0;
 
